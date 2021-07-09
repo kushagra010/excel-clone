@@ -17,8 +17,8 @@ for(let i=1;i<=100;i++){
             n=Math.floor(n/26);
         }
     }
-    $("#columns").append(`<div class="column-name" id="col-${i}" >${str}</div>`);
-    $("#rows").append(`<div class="row-name" id="row-${i}" >${i}</div>`)
+    $("#columns").append(`<div class="column-name column-${i}" id="${str}">${str}</div>`);
+    $("#rows").append(`<div class="row-name" id="row-${i}" >${i}</div>`);
 }
 
 let cellData={
@@ -67,7 +67,14 @@ $(".input-cell").dblclick(function(e){
 
 $(".input-cell").blur(function(e){
     $(this).attr("contenteditable","false");
+    let [rowId, colId] = getRowCol(this);
+    if (cellData[selectedSheet][rowId - 1][colId - 1].formula != "") {
+        updateStreams(this,[]);
+    }
+    cellData[selectedSheet][rowId - 1][colId - 1].formula = "";
     updateCellData("text",$(this).text());
+    let selfColCode = $(`.column-${colId}`).attr("id");
+    evalFormula(selfColCode + rowId);
 });
 
 function getRowCol(ele){
@@ -191,6 +198,7 @@ function changeHeader([rowId,colId]){
     $("#font-family").val(data["font-family"]);
     $("#font-size").val(data["font-size"]);
     $("#font-family").css("font-family",data["font-family"]);
+    $("#formula-input").text(data.formula);
 }
 
 function addRemoveSelectFromFontStyle(data,property){
@@ -202,41 +210,41 @@ function addRemoveSelectFromFontStyle(data,property){
     }
 }
 
-let columnArray=$(".column-name");
-for(let i=0;i<columnArray.length;i++){
-    $(columnArray[i]).click(function(e){
-        selectWholeCol(columnArray[i],e);
-    });
-}
-function selectWholeCol(ele,e){
-    $(".input-cell.selected").removeClass("selected top-selected bottom-selected left-selected right-selected gray-background-selected");
-    let colId=$(ele).attr("id");
-    let idArray=colId.split("-");
-    let colNumber=parseInt(idArray[1]);
-    for(let i=100;i>=1;i--){
-        let [rowId,colId]=getRowCol($(`#row-${i}-col-${colNumber}`)[0]);
-        let [topCell,bottomCell,leftCell,rightCell]=getTopLeftBottomRightCell(rowId,colId);
-        selectCell($(`#row-${i}-col-${colNumber}`)[0],{"ctrlKey":true},topCell,bottomCell,leftCell,rightCell);
-    }
-}
+// let columnArray=$(".column-name");
+// for(let i=0;i<columnArray.length;i++){
+//     $(columnArray[i]).click(function(e){
+//         selectWholeCol(columnArray[i],e);
+//     });
+// }
+// function selectWholeCol(ele,e){
+//     $(".input-cell.selected").removeClass("selected top-selected bottom-selected left-selected right-selected gray-background-selected");
+//     let colId=$(ele).attr("id");
+//     let idArray=colId.split("-");
+//     let colNumber=parseInt(idArray[1]);
+//     for(let i=100;i>=1;i--){
+//         let [rowId,colId]=getRowCol($(`#row-${i}-col-${colNumber}`)[0]);
+//         let [topCell,bottomCell,leftCell,rightCell]=getTopLeftBottomRightCell(rowId,colId);
+//         selectCell($(`#row-${i}-col-${colNumber}`)[0],{"ctrlKey":true},topCell,bottomCell,leftCell,rightCell);
+//     }
+// }
 
-let rowArray=$(".row-name");
-for(let i=0;i<rowArray.length;i++){
-    $(rowArray[i]).click(function(e){
-        selectWholeRow(rowArray[i],e);
-    });
-}
-function selectWholeRow(ele,e){
-    $(".input-cell.selected").removeClass("selected top-selected bottom-selected left-selected right-selected gray-background-selected");
-    let rowId=$(ele).attr("id");
-    let idArray=rowId.split("-");
-    let rowNumber=parseInt(idArray[1]);
-    for(let i=100;i>=1;i--){
-        let [rowId,colId]=getRowCol($(`#row-${rowNumber}-col-${i}`)[0]);
-        let [topCell,bottomCell,leftCell,rightCell]=getTopLeftBottomRightCell(rowId,colId);
-        selectCell($(`#row-${rowNumber}-col-${i}`)[0],{"ctrlKey":true},topCell,bottomCell,leftCell,rightCell);
-    }
-}
+// let rowArray=$(".row-name");
+// for(let i=0;i<rowArray.length;i++){
+//     $(rowArray[i]).click(function(e){
+//         selectWholeRow(rowArray[i],e);
+//     });
+// }
+// function selectWholeRow(ele,e){
+//     $(".input-cell.selected").removeClass("selected top-selected bottom-selected left-selected right-selected gray-background-selected");
+//     let rowId=$(ele).attr("id");
+//     let idArray=rowId.split("-");
+//     let rowNumber=parseInt(idArray[1]);
+//     for(let i=100;i>=1;i--){
+//         let [rowId,colId]=getRowCol($(`#row-${rowNumber}-col-${i}`)[0]);
+//         let [topCell,bottomCell,leftCell,rightCell]=getTopLeftBottomRightCell(rowId,colId);
+//         selectCell($(`#row-${rowNumber}-col-${i}`)[0],{"ctrlKey":true},topCell,bottomCell,leftCell,rightCell);
+//     }
+// }
 
 let startcellSelected=false;
 let startCell={};
@@ -834,6 +842,11 @@ $("#paste").click(function(e) {
                     delete cellData[selectedSheet][i-1];
                 }
             }
+        }
+    }
+    for(let i of rows) {
+        let cols = Object.keys(clipboard.cellData[i]);
+        for(let j of cols) {
             let rowDistance = parseInt(i) - parseInt(clipboard.startCell[0]);
             let colDistance = parseInt(j) - parseInt(clipboard.startCell[1]);
             if(!cellData[selectedSheet][startCell[0] + rowDistance - 1]) {
@@ -858,11 +871,144 @@ $("#formula-input").blur(function(e) {
             if(i.length >=2) {
                 i = i.replace("(","");
                 i = i.replace(")","");
-                elements.push(i);
+                if (!elements.includes(i)) {
+                    elements.push(i);
+                }
             }
         }
-        console.log(elements);
+        $(".input-cell.selected").each(function (index, data) {
+            if (updateStreams(data, elements, false)) {
+                let [rowId, colId] = getRowCol(data);
+                cellData[selectedSheet][rowId - 1][colId - 1].formula = formula;
+                let selfColCode = $(`.column-${colId}`).attr("id");
+                evalFormula(selfColCode + rowId);
+            } else {
+                alert("Formula is not valid");
+            }
+        })
     } else {
         alert("!Please select a cell First");
     }
 });
+
+function updateStreams(ele, elements, update, oldUpstream) {
+    let [rowId, colId] = getRowCol(ele);
+    let selfColCode = $(`.column-${colId}`).attr("id");
+    if (elements.includes(selfColCode + rowId)) {
+        return false;
+    }
+    if (cellData[selectedSheet][rowId - 1] && cellData[selectedSheet][rowId - 1][colId - 1]) {
+        let downStream = cellData[selectedSheet][rowId - 1][colId - 1].downStream;
+        let upStream = cellData[selectedSheet][rowId - 1][colId - 1].upStream;
+        for (let i of downStream) {
+            if (elements.includes(i)) {
+                return false;
+            }
+        }
+        for (let i of downStream) {
+            let [calRowId, calColId] = codeToValue(i);
+            console.log(updateStreams($(`#row-${calRowId}-col-${calColId}`)[0], elements, true, upStream));
+        }
+    }
+
+    if (!cellData[selectedSheet][rowId - 1]) {
+        cellData[selectedSheet][rowId - 1] = {};
+        cellData[selectedSheet][rowId - 1][colId - 1] = { ...defaultProperties, "upStream": [...elements], "downStream": [] };
+    } else if (!cellData[selectedSheet][rowId - 1][colId - 1]) {
+        cellData[selectedSheet][rowId - 1][colId - 1] = { ...defaultProperties, "upStream": [...elements], "downStream": [] };
+    } else {
+
+        let upStream = [...cellData[selectedSheet][rowId - 1][colId - 1].upStream];
+        if (update) {
+            for (let i of oldUpstream) {
+                let [calRowId, calColId] = codeToValue(i);
+                let index = cellData[selectedSheet][calRowId - 1][calColId - 1].downStream.indexOf(selfColCode + rowId);
+                cellData[selectedSheet][calRowId - 1][calColId - 1].downStream.splice(index, 1);
+                if (JSON.stringify(cellData[selectedSheet][calRowId - 1][calColId - 1]) == JSON.stringify(defaultProperties)) {
+                    delete cellData[selectedSheet][calRowId - 1][calColId - 1];
+                    if (Object.keys(cellData[selectedSheet][calRowId - 1]).length == 0) {
+                        delete cellData[selectedSheet][calRowId - 1];
+                    }
+                }
+                index = cellData[selectedSheet][rowId - 1][colId - 1].upStream.indexOf(i);
+                cellData[selectedSheet][rowId - 1][colId - 1].upStream.splice(index, 1);
+            }
+            for (let i of elements) {
+                cellData[selectedSheet][rowId - 1][colId - 1].upStream.push(i);
+            }
+        } else {
+            for (let i of upStream) {
+                let [calRowId, calColId] = codeToValue(i);
+                let index = cellData[selectedSheet][calRowId - 1][calColId - 1].downStream.indexOf(selfColCode + rowId);
+                cellData[selectedSheet][calRowId - 1][calColId - 1].downStream.splice(index, 1);
+                if (JSON.stringify(cellData[selectedSheet][calRowId - 1][calColId - 1]) == JSON.stringify(defaultProperties)) {
+                    delete cellData[selectedSheet][calRowId - 1][calColId - 1];
+                    if (Object.keys(cellData[selectedSheet][calRowId - 1]).length == 0) {
+                        delete cellData[selectedSheet][calRowId - 1];
+                    }
+                }
+            }
+            cellData[selectedSheet][rowId - 1][colId - 1].upStream = [...elements];
+        }
+    }
+
+    for (let i of elements) {
+        let [calRowId, calColId] = codeToValue(i);
+        if (!cellData[selectedSheet][calRowId - 1]) {
+            cellData[selectedSheet][calRowId - 1] = {};
+            cellData[selectedSheet][calRowId - 1][calColId - 1] = { ...defaultProperties, "upStream": [], "downStream": [selfColCode + rowId] };
+        } else if (!cellData[selectedSheet][calRowId - 1][calColId - 1]) {
+            cellData[selectedSheet][calRowId - 1][calColId - 1] = { ...defaultProperties, "upStream": [], "downStream": [selfColCode + rowId] };
+        } else {
+            cellData[selectedSheet][calRowId - 1][calColId - 1].downStream.push(selfColCode + rowId);
+        }
+    }
+    console.log(cellData);
+    return true;
+
+}
+
+function codeToValue(code) {
+    let colCode = "";
+    let rowCode = "";
+    for (let i = 0; i < code.length; i++) {
+        if (!isNaN(code.charAt(i))) {
+            rowCode += code.charAt(i);
+        } else {
+            colCode += code.charAt(i);
+        }
+    }
+    let colId = parseInt($(`#${colCode}`).attr("class").split(" ")[1].split("-")[1]);
+    let rowId = parseInt(rowCode);
+    return [rowId, colId];
+}
+
+function evalFormula(cell) {
+    let [rowId, colId] = codeToValue(cell);
+    let formula = cellData[selectedSheet][rowId - 1][colId - 1].formula;
+    console.log(formula);
+    if (formula != "") {
+        let upStream = cellData[selectedSheet][rowId - 1][colId - 1].upStream;
+        let upStreamValue = [];
+        for (let i in upStream) {
+            let [calRowId, calColId] = codeToValue(upStream[i]);
+            let value;
+            if (cellData[selectedSheet][calRowId - 1][calColId - 1].text == "") {
+                value = "0";
+            }
+             else {
+                value = cellData[selectedSheet][calRowId - 1][calColId - 1].text;
+            }
+            upStreamValue.push(value);
+            console.log(upStreamValue);
+            formula = formula.replace(upStream[i], upStreamValue[i]);
+        }
+        cellData[selectedSheet][rowId - 1][colId - 1].text = eval(formula);
+        loadCurrentSheet();
+    }
+    let downStream = cellData[selectedSheet][rowId - 1][colId - 1].downStream;
+    for (let i = downStream.length - 1; i >= 0; i--) {
+        evalFormula(downStream[i]);
+    }
+
+}
