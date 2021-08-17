@@ -606,6 +606,7 @@ function deleteSheet() {
     delete cellData[currSelectedSheet.text()];
     currSelectedSheet.remove();
     totalSheets--;
+    save=false;
 }
 
 $(".left-scroller,.right-scroller").click(function (e) {
