@@ -1,13 +1,13 @@
-body{
+body {
     margin: 0;
     overflow: hidden;
 }
 
-*{
+* {
     box-sizing: border-box;
 }
 
-.container{
+.container {
     display: flex;
     flex-direction: column;
     background-color: #fff;
@@ -17,7 +17,7 @@ body{
     position: relative;
 }
 
-.title{
+.title {
     background-color: #217346;
     text-align: center;
     font-size: 1rem;
@@ -26,14 +26,15 @@ body{
     color: #fff;
 }
 
-.menu-bar{
+.menu-bar {
     display: flex;
     flex-direction: row;
     height: 5vh;
     background-color: #217346;
 }
 
-.menu-bar-item{
+.menu-bar-item {
+    background-color: #217346;
     color: #fff;
     padding-left: 0.7rem;
     padding-right: 0.7rem;
@@ -42,29 +43,29 @@ body{
     align-items: center;
 }
 
-.menu-bar-item.selected{
+.menu-bar-item.selected {
     background-color: #fff;
     color: #217346;
 }
 
-.menu-bar-item:hover{
+.menu-bar-item:hover {
     background-color: #195534;
     cursor: pointer;
 }
 
-.menu-bar-item.selected:hover{
+.menu-bar-item.selected:hover {
     background-color: #fff;
     cursor: default;
 }
 
-.menu-icon-bar{
+.menu-icon-bar {
     display: flex;
     flex-direction: row;
     height: 6vh;
     align-items: center;
 }
 
-.menu-icon{
+.menu-icon {
     padding-left: 0.7rem;
     padding-right: 0.7rem;
     display: flex;
@@ -73,13 +74,14 @@ body{
     height: 100%;
 }
 
-.menu-icon:hover{
+.menu-icon:hover {
     background-color: lightgray;
     cursor: pointer;
+    height: 90%;
 }
 
-.menu-selector{
-    height: 4.5vh;
+.menu-selector {
+    height: 3.75vh;
     font-size: 1.2rem;
     margin-left: 0.7rem;
     margin-right: 0.7rem;
@@ -89,18 +91,18 @@ body{
     cursor: pointer;
 }
 
-#font-family{
+#font-family {
     width: 10vw;
     min-width: 130px;
     font-family: Noto Sans;
 }
 
-#font-size{
+#font-size {
     width: 3.5vw;
     min-width: 55px;
 }
 
-.formula-bar{
+.formula-bar {
     display: flex;
     flex-direction: row;
     height: 5vh;
@@ -111,7 +113,7 @@ body{
     background-color: lightgray;
 }
 
-#selected-cell{
+#selected-cell {
     width: 120px;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
@@ -120,10 +122,9 @@ body{
     align-items: center;
     overflow: hidden;
     background-color: #fff;
-    outline: none;
 }
 
-#formula-sign{
+#formula-sign {
     width: 40px;
     display: flex;
     justify-content: center;
@@ -131,7 +132,7 @@ body{
     height: 70%;
 }
 
-#formula-input{
+#formula-input {
     width: calc(100vw - 160px);
     padding-left: 0.5rem;
     padding-right: 0.5rem;
@@ -140,25 +141,23 @@ body{
     align-items: center;
     overflow: hidden;
     background-color: #fff;
-    outline: none;
 }
 
-.data-container{
+.data-container {
     display: flex;
     height: 75vh;
-    width: 100vw;
     flex-direction: row;
     flex-wrap: wrap;
-    /* overflow: scroll; */
+    width: 100vw;
 }
 
-#select-all{
+#select-all {
     width: 25px;
     height: 25px;
     border: 1px solid lightgray;
 }
 
-#columns{
+#columns {
     height: 25px;
     width: calc(100vw - 25px);
     border: 1px solid lightgray;
@@ -167,14 +166,14 @@ body{
     overflow: hidden;
 }
 
-#rows{
+#rows {
     width: 25px;
     height: calc(75vh - 25px);
     border: 1px solid lightgray;
     overflow: hidden;
 }
 
-#cells{
+#cells {
     position: relative;
     width: calc(100vw - 25px);
     height: calc(75vh - 25px);
@@ -182,40 +181,39 @@ body{
     overflow: scroll;
 }
 
-.column-name{
+.column-name {
     min-width: 100px;
     width: 100px;
     border-right: 1px solid lightgray;
-    /* border-bottom: 1px solid lightgray; */
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
 }
 
-.column-name:hover{
+/* .column-name:hover{
     cursor: pointer;
-}
+} */
 
-.row-name{
+.row-name {
     min-height: 25px;
     height: 25px;
     border-bottom: 1px solid lightgray;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     font-weight: bold;
 }
 
-.row-name:hover{
+/* .row-name:hover{
     cursor: pointer;
-}
+} */
 
-.cell-row{
+.cell-row {
     display: flex;
 }
 
-.input-cell{
+.input-cell {
     min-width: 100px;
     width: 100px;
     min-height: 25px;
@@ -233,7 +231,7 @@ body{
     outline-color: #217346;
 }
 
-.input-cell.selected{
+.input-cell.selected {
     border: 2px solid #217346;
 }
 
@@ -253,24 +251,25 @@ body{
     border-right: 1px solid lightgray;
 }
 
-.input-cell.gray-background-selected{
+/* .input-cell.gray-background-selected{
     background-color: lightgray;
+} */
+
+.menu-icon.selected {
+    background-color: lightgray;
+    height: 90%;
 }
 
-.menu-icon.selected{
-    background-color: lightgray;
-}
-
-.input-cell:hover{
+.input-cell:hover {
     cursor: cell;
 }
 
-#fill-color{
+#fill-color {
     border-bottom: 4px solid #fff;
     padding-bottom: 2px;
 }
 
-#text-color{
+#text-color {
     border-bottom: 4px solid #444;
     padding-bottom: 2px;
 }
@@ -340,18 +339,18 @@ body{
     transform: scale(1.2);
 }
 
-.sheet-options-modal{
+.sheet-options-modal {
     position: absolute;
     background-color: #fff;
     box-shadow: 0 8px 16px 0 lightgray;
     bottom: 4vh;
 }
 
-.option{
+.option {
     padding: 7px 15px 7px 15px;
 }
 
-.option:hover{
+.option:hover {
     background-color: lightgray;
     cursor: default;
 }
@@ -365,6 +364,7 @@ body{
     background-color: lightgray;
 }
 
+
 .sheet-modal-parent {
     position: absolute;
     height: 100vh;
@@ -376,7 +376,7 @@ body{
     align-items: center;
 }
 
-.sheet-rename-modal,.sheet-delete-modal{
+.sheet-rename-modal,.sheet-delete-modal {
     background-color: #fff;
     box-shadow: 0 8px 16px 0 rgb(88, 88, 88);
     padding: 15px;
@@ -391,7 +391,7 @@ body{
     font-weight: bold;
 }
 
-.sheet-modal-input-container,.sheet-modal-detail-container{
+.sheet-modal-input-container, .sheet-modal-detail-container {
     padding: 20px;
 }
 
@@ -403,7 +403,7 @@ body{
     font-weight: 600;
 }
 
-.sheet-modal-input-title,.sheet-modal-detail-title{
+.sheet-modal-input-title, .sheet-modal-detail-title{
     display: block;
     margin-bottom: 10px;
     font-weight: 600;
@@ -433,6 +433,8 @@ body{
     align-items: center;
     border-radius: 3px;
     font-weight: 600;
+    background-color: red;
+    color: #fff;
 }
 
 .yes-button {
@@ -446,7 +448,7 @@ body{
 }
 
 .no-button:hover {
-    background-color: lightgray;
+    background-color: rgb(185, 8, 8);
     cursor: pointer;
 }
 
@@ -460,60 +462,61 @@ body{
     margin-top: 5px ;
 }
 
-.file-modal{
+.file-modal {
     position: absolute;
     top: 0;
     left: 0;
     height: 100vh;
-    display: flex;
     width: 0vw;
+    display: flex;
 }
 
-.file-options-modal{
+.file-options-modal {
     width: 12rem;
     background-color: #217346;
     height: 100%;
     color: #fff;
 }
 
-.file-recent-modal{
-    height: 100%;
+.file-recent-modal {
     background-color: #fff;
+    height: 100%;
     width: calc(50% - 12rem);
+    box-shadow: 2px 0px 7px 2px gray;
 }
 
-.close,.new,.save,.open{
+.close,.new, .open, .save {
     display: flex;
     align-items: center;
-    padding-top: 8px; 
+    padding-top: 8px;
     padding-bottom: 8px;
     width: 100%;
+    font-size: 16px;
     justify-content: center;
     font-weight: 100;
-    font-size: 16px;
     position: relative;
 }
 
-.close{
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-.close-icon,.new-icon,.save-icon,.open-icon{
+.close-icon,.new-icon, .open-icon, .save-icon {
     position: absolute;
     left: 2rem;
 }
 
-.close-icon{
+.close {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.close-icon {
     transform: rotate(90deg);
 }
 
-.close:hover,.open:hover,.save:hover,.new:hover{
+.close:hover, .new:hover, .open:hover, .save:hover {
     background-color: #1e663f;
     cursor: pointer;
 }
 
-.file-transparent{
+.file-transparent {
     width: 50%;
     height: 100vh;
 }
